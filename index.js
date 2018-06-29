@@ -11,28 +11,28 @@ const colors = require('colors');
 const httpServer = http.createServer((req, res) => {
   unifiedServer(req, res)
 });
+// Instantiate HTTPS server
+const httpsServerOptions = {'key': fs.readFileSync('./https/key.pem'),'cert': fs.readFileSync('./https/cert.pem')}
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+  unifiedServer(req, res)
+});
 // Starting HTTP Server
+let protocolIsHTTP = 'HTTP'
 httpServer.listen(config.port, () => {
+  console.log(`\n Protocol: ${protocolIsHTTP}`)
   console.log(
     `
     The server is listening on the port\n
     ~~~~~~~~~~~~~~~~~~~~
-    Protocol: Http.cyan
     Port: ${(config.httpport + '').cyan }
     Env: ${(config.envName).cyan} 
     ~~~~~~~~~~~~~~~~~~~~`
   );
 });
-// Instantiate HTTPS server
-var httpsServerOptions = {
-  'key': fs.readFileSync('./https/key.pem'),
-  'cert': fs.readFileSync('./https/cert.pem')
-}
-const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
-  unifiedServer(req, res)
-});
 // Start HTTPS Server
+let protocolHTTPS = 'HTTPS'
 httpsServer.listen(config.port, () => {
+  console.log(`\n Protocol: ${protocolHTTPS}`)
   console.log(
     `
     ~~~~~~~~~~~~~~~~~~~~
