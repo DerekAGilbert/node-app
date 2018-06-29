@@ -19,28 +19,17 @@ const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
 // Starting HTTP Server
 let protocolIsHTTP = 'HTTP'
 httpServer.listen(config.port, () => {
-  console.log(`\n Protocol: ${protocolIsHTTP}`)
-  console.log(
-    `
-    The server is listening on the port\n
-    ~~~~~~~~~~~~~~~~~~~~
-    Port: ${(config.httpport + '').cyan }
-    Env: ${(config.envName).cyan} 
-    ~~~~~~~~~~~~~~~~~~~~`
-  );
+  console.log(`\n Protocol: ${(protocolIsHTTP).green}`)
+  console.log(`\n     Port: ${(config.httpport + '').cyan}`)
+  console.log(`\n      Env: ${(config.envName).cyan}`)
 });
 // Start HTTPS Server
-let protocolHTTPS = 'HTTPS'
+let protocolIsHTTPS = 'HTTPS'
 httpsServer.listen(config.port, () => {
-  console.log(`\n Protocol: ${protocolHTTPS}`)
-  console.log(
-    `
-    ~~~~~~~~~~~~~~~~~~~~
-    port: ${(config.httpsport + '').cyan}
-    env: ${(config.envName).cyan}
-    ~~~~~~~~~~~~~~~~~~~~
-    ...`
-  );
+  console.log(`\n ~~~~~~~~~~~~~~~~~~~~~~~`)
+  console.log(`\n Protocol: ${(protocolIsHTTPS).green}`)
+  console.log(`\n     Port: ${(config.httpsport + '').cyan}`)
+  console.log(`\n      Env: ${(config.envName).cyan}`)
 });
 // Unified Server
 const unifiedServer = (req, res) => {
@@ -76,10 +65,6 @@ const unifiedServer = (req, res) => {
     });
   });
 }
-
-
-
-
 // example handlers
 var handlers = {};
 handlers.sample = function (data, callback) {
