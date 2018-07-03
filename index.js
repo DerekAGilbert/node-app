@@ -5,27 +5,30 @@ const url = require('url')
 const StringDecoder = require('string_decoder').StringDecoder
 const config = require('./config')
 const fs = require('fs')
-const colors = require('colors');
+const colors = require('colors')
 
 // Instantiate HTTP server
 const httpServer = http.createServer((req, res) => {
-  unifiedServer(req, res)
-});
-// Instantiate HTTPS server
-const httpsServerOptions = {'key': fs.readFileSync('./https/key.pem'),'cert': fs.readFileSync('./https/cert.pem')}
-const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
-  unifiedServer(req, res)
+    unifiedServer(req, res)
 });
 // Starting HTTP Server
 let protocolIsHTTP = 'HTTP'
-httpServer.listen(config.port, () => {
+httpServer.listen(config.httpport, () => {
   console.log(`\n Protocol: ${(protocolIsHTTP).green}`)
   console.log(`\n     Port: ${(config.httpport + '').cyan}`)
   console.log(`\n      Env: ${(config.envName).cyan}`)
 });
+// Instantiate HTTPS server
+const httpsServerOptions = {
+  'key': fs.readFileSync('./https/key.pem'),
+  'cert': fs.readFileSync('./https/cert.pem')
+}
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+    unifiedServer(req, res)
+});
 // Start HTTPS Server
 let protocolIsHTTPS = 'HTTPS'
-httpsServer.listen(config.port, () => {
+httpsServer.listen(config.httpsport, () => {
   console.log(`\n ~~~~~~~~~~~~~~~~~~~~~~~`)
   console.log(`\n Protocol: ${(protocolIsHTTPS).green}`)
   console.log(`\n     Port: ${(config.httpsport + '').cyan}`)
@@ -54,25 +57,32 @@ const unifiedServer = (req, res) => {
       'headers': headers,
       'payload': buffer
     };
-    chosenHandler(data, function (statusCode, payload) {
+    chosenHandler(data, (statusCode, payload) => {
       statusCode = typeof (statusCode) == 'number' ? statusCode : 200;
       payload = typeof (payload) == 'object' ? payload : {};
       var payloadString = JSON.stringify(payload);
       res.setHeader('Content-type', 'application/json');
       res.writeHead(statusCode);
       res.end(payloadString);
-      console.log("Returning this response: ", statusCode, payloadString);
+      console.log(`
+      Path: ${(trimmedPath).blue}\n 
+      Status Code: ${(statusCode + '').blue}
+      `);
     });
   });
 }
-// example handlers
+// Define all the handlers
 var handlers = {};
-handlers.sample = function (data, callback) {
-    callback(406, {"name": "derek"});
+
+// Ping handler
+handlers.ping = function(data,callback){
+    callback(200);
 };
-handlers.notFound = function (data, callback) {
-    callback(404);
+// Not-Found handler
+handlers.notFound = function(data,callback){
+  callback(404);
 };
+// Define the request router
 var router = {
-  'sample': handlers.sample
+  'ping' : handlers.ping
 };
